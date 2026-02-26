@@ -1,0 +1,153 @@
+# Handwritten Digit OCR using Deep Learning
+
+## Technical Assignment Report
+
+### 1. Introduction
+
+This project implements an Optical Character Recognition (OCR) pipeline for extracting numeric sequences from images using a deep learning–based approach. The objective was to design a system capable of identifying and recognizing digits from image inputs while adhering to the assignment constraints of using only open-source tools and avoiding external OCR APIs.
+
+The implemented solution combines classical computer vision techniques for digit segmentation with a Convolutional Neural Network (CNN) trained on handwritten digit data. The system is designed to process arbitrary images and output digit sequences along with structured metadata.
+
+---
+
+### 2. Dataset Used
+
+The digit classification model was trained using the MNIST dataset, which contains 70,000 grayscale handwritten digit images (28×28 pixels). MNIST was selected because:
+
+• It is an industry-standard dataset for handwritten digit recognition
+• It enables fast model convergence with limited computational resources
+• It provides a strong baseline for evaluating digit recognition pipelines
+
+To evaluate real-world performance, the trained model was also tested on sample images from the OCR Receipts dataset provided in the assignment. This allowed assessment of the model’s generalization ability on unseen domains.
+
+---
+
+### 3. System Architecture
+
+The system consists of two primary stages:
+
+#### Stage 1 — Image Preprocessing and Segmentation
+
+The input image undergoes:
+
+1. Conversion to grayscale
+2. Gaussian blurring to reduce noise
+3. Adaptive thresholding to isolate foreground pixels
+4. Morphological closing to fill digit gaps
+5. Contour detection to locate candidate digit regions
+6. Line grouping and sorting of digit bounding boxes
+
+Each detected region is cropped and resized to 28×28 pixels for CNN inference.
+
+#### Stage 2 — Digit Recognition using CNN
+
+Each segmented digit is normalized and passed to a Convolutional Neural Network trained on MNIST.
+
+The CNN architecture includes:
+
+• Three convolutional layers with ReLU activations
+• Max pooling layers for spatial reduction
+• Dropout layers for regularization
+• Two fully connected layers for classification
+• Softmax output across 10 digit classes
+
+The model was trained using Cross-Entropy Loss and the Adam optimizer.
+
+---
+
+### 4. Implementation Details
+
+The system was implemented using:
+
+• PyTorch for model training and inference
+• OpenCV for image preprocessing and segmentation
+• NumPy for numerical operations
+• Pillow for image loading
+
+The pipeline is fully command-line executable and produces both visual and structured outputs.
+
+Outputs include:
+
+• Extracted digit sequences per image
+• Bounding boxes and confidence scores
+• Annotated debug images showing detected regions
+• JSON file storing all recognition results
+
+This design ensures reproducibility and transparency in evaluation.
+
+---
+
+### 5. Evaluation on Provided Dataset
+
+The model was evaluated on multiple receipt images from the provided OCR dataset.
+
+Observations:
+
+• The system successfully detects and segments numeric regions from receipt images
+• Digit sequences are extracted and structured output is generated
+• Performance varies depending on font style and image quality
+
+Because the model was trained on handwritten digits, recognition accuracy decreases on printed receipt text due to domain mismatch. However, segmentation remains stable and the pipeline continues to extract candidate numeric regions effectively.
+
+This experiment demonstrates that while MNIST training provides strong baseline digit recognition capability, domain-specific training data would significantly improve accuracy on receipt datasets.
+
+---
+
+### 6. Challenges Faced
+
+Several practical challenges were encountered:
+
+• Receipts contain printed fonts rather than handwritten digits
+• Presence of barcodes, logos, and QR codes introduces segmentation noise
+• Lighting variation and shadows affect thresholding quality
+• Thin text strokes reduce classification confidence
+
+These challenges highlight the importance of dataset alignment and preprocessing strategies in OCR systems.
+
+---
+
+### 7. Future Improvements
+
+Given additional time, the following enhancements could improve performance:
+
+• Fine-tuning the CNN using receipt digit samples
+• Introducing a digit detection network instead of contour filtering
+• Implementing text detection models such as EAST or CRAFT
+• Applying sequence-level recognition models (e.g., CRNN)
+• Using data augmentation to simulate varied digit styles
+
+Such improvements would allow the system to generalize across both handwritten and printed numeric data.
+
+---
+
+### 8. Reproducibility Instructions
+
+To run this project:
+
+1. Install dependencies:
+
+   pip install -r requirements.txt
+
+2. Train the model (optional if weights provided):
+
+   python src/ocr_digits.py --train
+
+3. Run OCR on images:
+
+   python src/ocr_digits.py images/sample.jpg --model output/digit_cnn.pth --debug
+
+4. Review results in:
+
+   output/results.json
+
+Annotated output images will also be generated in the output folder.
+
+---
+
+### 9. Conclusion
+
+This project demonstrates a complete deep learning–based OCR pipeline capable of extracting digit sequences from real-world images. While trained on handwritten digit data, the system successfully processes receipt images and produces structured outputs, illustrating both the strengths and limitations of domain-agnostic OCR models.
+
+The implementation showcases practical understanding of deep learning, computer vision preprocessing, and end-to-end system design for OCR applications.
+
+---
